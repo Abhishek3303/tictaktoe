@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #3498db;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #ecf0f1;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            margin: 20px auto;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            border: 2px solid #ecf0f1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .cell:hover {
+            background-color: #34495e;
+        }
+
+        #message {
+            font-size: 18px;
+            margin-top: 20px;
+            color: #ecf0f1;
+        }
+
+        #scoreboard {
+            margin-top: 20px;
+            color: #ecf0f1;
+        }
+
+        #reset-btn {
+            background-color: #27ae60;
+            color: #ecf0f1;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #reset-btn:hover {
+            background-color: #219d54;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div id="board">
+        <div class="cell" onclick="makeMove(0)"></div>
+        <div class="cell" onclick="makeMove(1)"></div>
+        <div class="cell" onclick="makeMove(2)"></div>
+        <div class="cell" onclick="makeMove(3)"></div>
+        <div class="cell" onclick="makeMove(4)"></div>
+        <div class="cell" onclick="makeMove(5)"></div>
+        <div class="cell" onclick="makeMove(6)"></div>
+        <div class="cell" onclick="makeMove(7)"></div>
+        <div class="cell" onclick="makeMove(8)"></div>
+    </div>
+    <div id="message">Player X's turn</div>
+    <div id="scoreboard">Score: Player X - 0, Player O - 0, Draw - 0</div>
+    <button id="reset-btn" onclick="resetGame()">Reset Game</button>
+
+    <script>
+        let currentPlayer = 'X';
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+        let scoreX = 0;
+        let scoreO = 0;
+        let scoreDraw = 0;
+
+        function makeMove(index) {
+            if (board[index] === '' && gameActive) {
+                board[index] = currentPlayer;
+                document.getElementById(`board`).children[index].innerText = currentPlayer;
+                checkWinner();
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                document.getElementById(`message`).innerText = `Player ${currentPlayer}'s turn`;
+            }
+        }
+
+        function checkWinner() {
+            const winningCombinations = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6] // Diagonals
+            ];
+
+            for (const combination of winningCombinations) {
+                const [a, b, c] = combination;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    document.getElementById(`message`).innerText = `Player ${board[a]} wins!`;
+                    updateScore(board[a]);
+                    gameActive = false;
+                    autoRestart();
+                }
+            }
+
+            if (!board.includes('') && gameActive) {
+                document.getElementById(`message`).innerText = `It's a draw!`;
+                updateScore('Draw');
+                gameActive = false;
+                autoRestart();
+            }
+        }
+
+        function updateScore(winner) {
+            if (winner === 'X') {
+                scoreX++;
+            } else if (winner === 'O') {
+                scoreO++;
+            } else if (winner === 'Draw') {
+                scoreDraw++;
+            }
+            document.getElementById('scoreboard').innerText = `Score: Player X - ${scoreX}, Player O - ${scoreO}, Draw - ${scoreDraw}`;
+        }
+
+        function resetGame() {
+            currentPlayer = 'X';
+            board = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+            document.getElementById(`message`).innerText = `Player X's turn`;
+            Array.from(document.getElementById('board').children).forEach(cell => cell.innerText = '');
+        }
+
+        function autoRestart() {
+            setTimeout(resetGame, 1000); // Auto-restart after 2 seconds
+        }
+    </script>
+</body>
+
+</html>
